@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class ReservationController extends Controller
@@ -13,8 +14,11 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        $reservations = Reservation::with('room.property')->get();
-        return Inertia::render('Reservations/Index', compact('reservations'));
+        $reservations = Reservation::with('room.property','guests')->get();
+        return Inertia::render('Reservations/Index', [
+            'reservations' => $reservations->toArray(),
+            'currentRouteName' => Route::currentRouteName()
+        ]);
     }
 
     /**

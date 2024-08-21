@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class RoomController extends Controller
@@ -14,7 +15,10 @@ class RoomController extends Controller
     public function index()
     {
         $rooms = Room::with('property')->get();
-        return Inertia::render('Rooms/Index', compact('rooms'));
+        return Inertia::render('Rooms/Index', [
+            'rooms' => $rooms->toArray(),
+            'currentRouteName' => Route::currentRouteName()
+        ]);
     }
 
     public function create()

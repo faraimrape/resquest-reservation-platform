@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class GuestController extends Controller
@@ -14,7 +15,10 @@ class GuestController extends Controller
     public function index()
     {
         $guests = Guest::with('reservation.room.property')->get();
-        return Inertia::render('Guests/Index', compact('guests'));
+        return Inertia::render('Guests/Index', [
+            'guests' => $guests->toArray(),
+            'currentRouteName' => Route::currentRouteName()
+        ]);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class PropertyController extends Controller
@@ -15,7 +16,8 @@ class PropertyController extends Controller
     {
         $properties = Property::where('is_published', true)->get();
         return Inertia::render('Properties/Index', [
-            'properties' => $properties->toArray(), // Convert to an array for easier handling
+            'properties' => $properties->toArray(),
+            'currentRouteName' => Route::currentRouteName()
         ]);
     }
 
