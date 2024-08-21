@@ -14,8 +14,12 @@ class PropertyController extends Controller
     public function index()
     {
         $properties = Property::where('is_published', true)->get();
-        return Inertia::render('Properties/Index', compact('properties'));
+        return Inertia::render('Properties/Index', [
+            'properties' => $properties->toArray(), // Convert to an array for easier handling
+        ]);
     }
+
+
 
 
     /**

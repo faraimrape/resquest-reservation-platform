@@ -1,65 +1,81 @@
+
 <template>
-    <div>
-        <h1 class="text-2xl font-bold mb-6">Manage Rooms</h1>
+    <Head title="Manage Rooms" />
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Manage Rooms</h2>
+        </template>
 
-        <!-- Handle cases where no properties are available -->
-        <div v-if="!properties.length" class="mb-4 text-red-600">
-            No properties available. Please add some properties first.
+        <div class="flex">
+            <!-- Sidebar Menu -->
+            <aside class="w-64 bg-gray-800 text-white h-screen px-4 py-6">
+                <nav>
+                    <ul>
+                        <li class="mb-4">
+                            <Link href="/properties" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Properties</Link>
+                        </li>
+                        <li class="mb-4">
+                            <Link href="/rooms" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Rooms</Link>
+                        </li>
+                        <li class="mb-4">
+                            <Link href="/reservations" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Reservations</Link>
+                        </li>
+                        <li class="mb-4">
+                            <Link href="/guests" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Guests</Link>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-6 bg-gray-100">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <!-- Rooms Table -->
+                        <h1 class="text-2xl font-bold mb-6">Manage Rooms</h1>
+
+                        <div v-if="rooms.length === 0" class="text-red-600">
+                            No rooms found. Please add some rooms.
+                        </div>
+
+                        <div v-else>
+                            <div class="mb-4">
+                                <Link href="/rooms/create" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Add New Room</Link>
+                            </div>
+                            <table class="min-w-full bg-white shadow-md rounded-lg">
+                                <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Room Name</th>
+                                    <th class="px-6 py-3 text-left">Property</th>
+                                    <th class="px-6 py-3 text-left">Capacity</th>
+                                    <th class="px-6 py-3 text-left">Price Per Night</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="room in rooms" :key="room.id">
+                                    <td class="px-6 py-4">{{ room.name }}</td>
+                                    <td class="px-6 py-4">{{ room.property.name }}</td>
+                                    <td class="px-6 py-4">{{ room.capacity }}</td>
+                                    <td class="px-6 py-4">${{ room.price_per_night }}</td>
+                                    <td class="px-6 py-4">
+                                        <Link :href="`/rooms/${room.id}/edit`" class="text-blue-600 hover:text-blue-900">Edit</Link>
+                                        <Link :href="`/rooms/${room.id}/delete`" class="ml-4 text-red-600 hover:text-red-900">Delete</Link>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-
-        <div v-else>
-            <!-- Dropdown to filter rooms by property -->
-            <div class="mb-4">
-                <label for="property" class="block text-gray-700">Filter by Property:</label>
-                <select id="property" v-model="selectedProperty" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <option v-for="property in properties" :key="property.id" :value="property.id">{{ property.name }}</option>
-                </select>
-            </div>
-
-            <!-- Room management table -->
-            <table v-if="filteredRooms.length" class="min-w-full bg-white shadow-md rounded-lg">
-                <!-- Table headers -->
-                <thead>
-                <tr>
-                    <th class="px-6 py-3 text-left">Room Name</th>
-                    <th class="px-6 py-3 text-left">Capacity</th>
-                    <th class="px-6 py-3 text-left">Price per Night</th>
-                    <th class="px-6 py-3 text-left">Actions</th>
-                </tr>
-                </thead>
-                <!-- Table rows -->
-                <tbody>
-                <!-- Loop through rooms filtered by property -->
-                <tr v-for="room in filteredRooms" :key="room.id">
-                    <td class="px-6 py-4">{{ room.name }}</td>
-                    <td class="px-6 py-4">{{ room.capacity }}</td>
-                    <td class="px-6 py-4">${{ room.price_per_night }}</td>
-                    <td class="px-6 py-4">
-                        <inertia-link :href="`/rooms/${room.id}/edit`" class="text-blue-600 hover:text-blue-900">Edit</inertia-link>
-                        <inertia-link :href="`/rooms/${room.id}/delete`" class="ml-4 text-red-600 hover:text-red-900">Delete</inertia-link>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <!-- No rooms available message -->
-            <div v-else class="mt-4 text-red-600">
-                No rooms available for this property.
-            </div>
-        </div>
-    </div>
+    </AuthenticatedLayout>
 </template>
-
 <script setup>
-import { ref, computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
-const properties = ref(usePage().props.value.properties || []);
-const rooms = ref(usePage().props.value.rooms || []);
-const selectedProperty = ref(properties.value[0]?.id || null); // Default to the first property, if available
-
-const filteredRooms = computed(() => {
-    if (!selectedProperty.value) return rooms.value;
-    return rooms.value.filter(room => room.property_id === selectedProperty.value);
-});
+// Access rooms data directly from the Inertia props
+const rooms = usePage().props.rooms ?? [];
 </script>
