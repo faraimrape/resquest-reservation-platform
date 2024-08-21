@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    app:
+        build: .
+        ports:
+            - "8000:9000"
+        environment:
+            DB_CONNECTION: mysql
+            DB_HOST: db
+            DB_PORT: 3306
+            DB_DATABASE: hotel_reservation
+            DB_USERNAME: root
+            DB_PASSWORD: secret
+        depends_on:
+            - db
+
+    db:
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_DATABASE: hotel_reservation
+        ports:
+            - "3306:3306"
+        volumes:
+            - dbdata:/var/lib/mysql
+
+volumes:
+    dbdata:
