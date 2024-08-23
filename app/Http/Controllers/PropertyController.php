@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PropertyController extends Controller
 {
@@ -27,9 +29,12 @@ class PropertyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
     public function create()
     {
-        //
+        return Inertia::render('Properties/Create',[
+           'currentRouteName' => Route::currentRouteName(),
+        ]);
     }
 
     /**
@@ -56,27 +61,28 @@ class PropertyController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Property $property)
+    public function edit(Property $property): Response
     {
-        //
+        return Inertia::render('Properties/Edit', compact('property'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Property $property)
+    public function update(Request $request, Property $property): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $property->update($request->all());
+
+        return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Property $property)
+    public function destroy(Property $property): RedirectResponse
     {
-        //
+        $property->delete();
+
+        return redirect()->route('properties.index')->with('success', 'Property deleted successfully.');
     }
 }
