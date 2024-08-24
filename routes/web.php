@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('properties', PropertyController::class);
+    Route::put('/properties/{property}', [PropertyController::class, 'update']);
     Route::get('properties/{property}/rooms', [RoomController::class, 'index'])->name('properties.rooms.index'); // Rooms filtered by property
     Route::resource('rooms', RoomController::class);
     Route::resource('reservations', ReservationController::class);

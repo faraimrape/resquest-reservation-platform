@@ -14,6 +14,7 @@ class Property extends Model
         'location',
         'description',
         'is_published',
+        'image_url',
     ];
     public function rooms(): HasMany
     {

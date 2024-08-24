@@ -51,12 +51,18 @@ class PropertyController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'location' => 'required|string',
+            'location' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'is_published' => 'required|boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
 
+        if ($request->hasFile('image')) {
+            $data['image_url'] = $request->file('image')->store('properties', 'public');
+        }
+
         Property::create($data);
+
         return redirect()->route('properties.index')->with('success', 'Property created successfully.');
     }
 
@@ -73,18 +79,27 @@ class PropertyController extends Controller
         return Inertia::render('Properties/Edit', compact('property'));
     }
 
-    public function update(Request $request, Property $property): RedirectResponse
+    public function update(Request $request, Property $property)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'is_published' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $property->update($request->all());
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('properties', 'public');
+            $validated['image_url'] = $path;
+        }
+
+        $property->update($validated);
 
         return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
     }
+
+
 
     public function destroy(Property $property)
     {
