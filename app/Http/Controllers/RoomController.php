@@ -92,7 +92,7 @@ class RoomController extends Controller
             'property_id' => 'required|exists:properties,id',
             'capacity' => 'required|integer',
             'price_per_night' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validating the image
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048', // Validating the image
         ]);
 
         $imageUrl = $room->image_url;

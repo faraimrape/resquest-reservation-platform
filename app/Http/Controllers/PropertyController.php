@@ -6,6 +6,7 @@ use App\Models\Property;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -86,18 +87,28 @@ class PropertyController extends Controller
             'location' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_published' => 'required|boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
         ]);
 
+        // Store the current image URL
+        $imageUrl = $property->image_url;
+
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('properties', 'public');
-            $validated['image_url'] = $path;
+            // Delete the old image if it exists
+            if ($imageUrl) {
+                Storage::disk('public')->delete($imageUrl);
+            }
+
+            // Store the new image in the 'properties' folder
+            $imageUrl = $request->file('image')->store('properties', 'public');
+            $validated['image_url'] = $imageUrl;
         }
 
         $property->update($validated);
 
         return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
     }
+
 
 
 

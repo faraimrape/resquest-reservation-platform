@@ -49,6 +49,55 @@ class ReservationController extends Controller
         ]);
     }
 
+    public function createFrontendReservation(Request $request): Response
+    {
+        // Fetch properties that are published along with their rooms
+        $properties = Property::where('is_published', true)
+            ->with('rooms') // Load rooms without any filtering on the rooms table
+            ->get();
+
+        return Inertia::render('Reservations/Book', [
+            'properties' => $properties,
+        ]);
+    }
+
+
+
+
+    public function storeFrontendReservation(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'check_in' => 'required|date|after_or_equal:today',
+            'check_out' => 'required|date|after:check_in',
+            'guest_details' => 'required|array|min:1',
+            'guest_details.*.first_name' => 'required|string|max:255',
+            'guest_details.*.last_name' => 'required|string|max:255',
+            'guest_details.*.email' => 'required|email|max:255',
+            'guest_details.*.phone' => 'required|string|max:20',
+        ]);
+
+        // Create the reservation
+        $reservation = Reservation::create([
+            'room_id' => $validated['room_id'],
+            'check_in' => $validated['check_in'],
+            'check_out' => $validated['check_out'],
+            'is_approved' => false, // Initially mark as pending approval
+        ]);
+
+        // Add guests to the reservation
+        foreach ($validated['guest_details'] as $guest) {
+            Guest::create([
+                'reservation_id' => $reservation->id,
+                'first_name' => $guest['first_name'],
+                'last_name' => $guest['last_name'],
+                'email' => $guest['email'],
+                'phone' => $guest['phone'],
+            ]);
+        }
+        return redirect('/')->with('success', 'Your reservation has been submitted and is pending approval.');
+    }
+
 
     /**
      * Show the form for creating a new resource.

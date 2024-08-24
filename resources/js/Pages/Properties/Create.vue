@@ -35,7 +35,7 @@
                             <!-- Image Upload Field -->
                             <div class="mb-6">
                                 <label for="image" class="block font-semibold text-gray-700 mb-2">Property Image</label>
-                                <input @change="handleFileChange" id="image" type="file" accept="image/*" class="border-gray-300 border rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <input @change="handleFileChange"  id="image" type="file" accept="image/*" class="border-gray-300 border rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <span v-if="form.errors.image" class="text-red-600 mt-1 block">{{ form.errors.image }}</span>
                             </div>
 
