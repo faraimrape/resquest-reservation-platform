@@ -14,6 +14,7 @@ class Room extends Model
         'name',
         'capacity',
         'price_per_night',
+        'image_url'
     ];
     public function property(): BelongsTo
     {

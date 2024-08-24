@@ -13,13 +13,13 @@
                         <form @submit.prevent="submit">
                             <div class="mb-4">
                                 <label for="name" class="block font-bold text-gray-700">Room Name</label>
-                                <input v-model="form.name" id="name" type="text" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500"  required>
+                                <input v-model="form.name" id="name" type="text" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
                                 <span v-if="form.errors.name" class="text-red-600">{{ form.errors.name }}</span>
                             </div>
 
                             <div class="mb-4">
                                 <label for="property_id" class="block font-bold text-gray-700">Property</label>
-                                <select v-model="form.property_id" id="property_id" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500"  required>
+                                <select v-model="form.property_id" id="property_id" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
                                     <option value="" disabled>Select a property</option>
                                     <option v-for="property in properties" :key="property.id" :value="property.id">
                                         {{ property.name }}
@@ -30,14 +30,27 @@
 
                             <div class="mb-4">
                                 <label for="capacity" class="block font-bold text-gray-700">Capacity</label>
-                                <input v-model="form.capacity" id="capacity" type="number"class=" border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500"  required>
+                                <input v-model="form.capacity" id="capacity" type="number" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
                                 <span v-if="form.errors.capacity" class="text-red-600">{{ form.errors.capacity }}</span>
                             </div>
 
                             <div class="mb-4">
                                 <label for="price_per_night" class="block font-bold text-gray-700">Price Per Night</label>
-                                <input v-model="form.price_per_night" id="price_per_night" type="number" step="0.01" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500"  required>
+                                <input v-model="form.price_per_night" id="price_per_night" type="number" step="0.01" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
                                 <span v-if="form.errors.price_per_night" class="text-red-600">{{ form.errors.price_per_night }}</span>
+                            </div>
+
+                            <!-- Image Field -->
+                            <div class="mb-4">
+                                <label for="image" class="block font-bold text-gray-700">Room Image</label>
+                                <input type="file" id="image" @change="handleImageChange" class="border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <span v-if="form.errors.image" class="text-red-600">{{ form.errors.image }}</span>
+
+                                <!-- Display the existing image if available -->
+                                <div v-if="room.image_url" class="mt-4">
+                                    <p class="font-bold">Current Image:</p>
+                                    <img :src="`/storage/${room.image_url}`" alt="Current Room Image" class="mt-2 w-48 rounded">
+                                </div>
                             </div>
 
                             <div class="flex items-center justify-between">
@@ -53,31 +66,50 @@
 </template>
 
 <script setup>
-import { useForm, Link, Head } from '@inertiajs/vue3';
+import { useForm, Link, Head, usePage } from '@inertiajs/vue3';
 import SidebarMenu from '@/Components/SideMenu.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { usePage } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
 import { useToast } from "vue-toastification";
 
 const { props } = usePage();
 const properties = props.properties ?? [];
 const room = props.room;
 
-// Initialize the form with the room's current data
 const form = useForm({
     name: room.name,
     property_id: room.property_id,
     capacity: room.capacity,
     price_per_night: room.price_per_night,
+    image: null, // The new image field
 });
 
 const toast = useToast();
 
+const handleImageChange = (event) => {
+    form.image = event.target.files[0];
+};
+
 const submit = () => {
-    form.put(`/rooms/${room.id}`, {
+    const formData = new FormData();
+    formData.append('name', form.name);
+    formData.append('property_id', form.property_id);
+    formData.append('capacity', form.capacity);
+    formData.append('price_per_night', form.price_per_night);
+
+    if (form.image) {
+        formData.append('image', form.image);
+    }
+
+    Inertia.post(`/rooms/${room.id}`, formData, {
+        headers: {
+            'X-HTTP-Method-Override': 'PUT',
+        },
         onSuccess: () => {
             toast.success('Room updated successfully.');
         },
+        preserveState: true,
+        preserveScroll: true,
     });
 };
 </script>

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Property;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class RoomController extends Controller
@@ -55,9 +57,23 @@ class RoomController extends Controller
             'property_id' => 'required|exists:properties,id',
             'capacity' => 'required|integer',
             'price_per_night' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validating the image
         ]);
 
-        Room::create($request->all());
+        $imageUrl = null;
+
+        if ($request->hasFile('image')) {
+            // Store the image in the 'rooms' folder
+            $imageUrl = $request->file('image')->store('rooms', 'public');
+        }
+
+        Room::create([
+            'name' => $request->name,
+            'property_id' => $request->property_id,
+            'capacity' => $request->capacity,
+            'price_per_night' => $request->price_per_night,
+            'image_url' => $imageUrl,
+        ]);
 
         return redirect()->route('rooms.index')->with('success', 'Room added successfully.');
     }
@@ -68,6 +84,7 @@ class RoomController extends Controller
         return Inertia::render('Rooms/Edit', compact('room', 'properties'));
     }
 
+
     public function update(Request $request, Room $room)
     {
         $request->validate([
@@ -75,9 +92,28 @@ class RoomController extends Controller
             'property_id' => 'required|exists:properties,id',
             'capacity' => 'required|integer',
             'price_per_night' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validating the image
         ]);
 
-        $room->update($request->all());
+        $imageUrl = $room->image_url;
+
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($imageUrl) {
+                Storage::disk('public')->delete($imageUrl);
+            }
+
+            // Store the new image in the 'rooms' folder
+            $imageUrl = $request->file('image')->store('rooms', 'public');
+        }
+
+        $room->update([
+            'name' => $request->name,
+            'property_id' => $request->property_id,
+            'capacity' => $request->capacity,
+            'price_per_night' => $request->price_per_night,
+            'image_url' => $imageUrl,
+        ]);
 
         return redirect()->route('rooms.index')->with('success', 'Room updated successfully.');
     }
