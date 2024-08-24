@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Room extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'property_id',
+        'name',
+        'capacity',
+        'price_per_night',
+    ];
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);

@@ -16,14 +16,12 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::where('is_published', true)->get();
+        $properties = Property::get();
         return Inertia::render('Properties/Index', [
             'properties' => $properties->toArray(),
             'currentRouteName' => Route::currentRouteName()
         ]);
     }
-
-
 
 
     /**
@@ -50,7 +48,7 @@ class PropertyController extends Controller
         ]);
 
         Property::create($data);
-        return redirect()->back()->with('success', 'Property added successfully.');
+        return redirect()->route('properties.index')->with('success', 'Property created successfully.');
     }
 
     /**
@@ -79,10 +77,13 @@ class PropertyController extends Controller
         return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
     }
 
-    public function destroy(Property $property): RedirectResponse
+    public function destroy(Property $property)
     {
         $property->delete();
 
-        return redirect()->route('properties.index')->with('success', 'Property deleted successfully.');
     }
+
+
+
+
 }

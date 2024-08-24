@@ -20,7 +20,7 @@
                 </div>
 
                 <!-- Reservations Table -->
-                <table v-else class="min-w-full bg-white shadow-md rounded">
+                <table v-else class="min-w-full bg-white shadow-md rounded text-sm">
                     <thead>
                     <tr>
                         <th class="px-6 py-3 text-left">Guest Name</th>
@@ -47,9 +47,11 @@
                                     {{ reservation.is_approved ? 'Approved' : 'Pending' }}
                                 </span>
                         </td>
-                        <td class="px-6 py-4">
-                            <button class="text-blue-500 mr-2" @click="approveReservation(reservation.id)">Approve</button>
-                            <button class="text-red-500" @click="rejectReservation(reservation.id)">Reject</button>
+                        <td class="px-6 py-4 flex items-center space-x-4">
+                            <Link :href="`/reservations/${reservation.id}/edit`" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Edit</Link>
+                            <button @click.prevent="deleteReservation(reservation.id)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Delete</button>
+                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700" @click="approveReservation(reservation.id)">Approve</button>
+                            <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700" @click="rejectReservation(reservation.id)">Reject</button>
                         </td>
                     </tr>
                     </tbody>
@@ -60,22 +62,58 @@
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { usePage, Link, Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { onMounted } from 'vue';
 import SidebarMenu from '@/Components/SideMenu.vue';
-import { Head } from '@inertiajs/vue3';
+import { useToast } from "vue-toastification";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-// Access reservations directly from Inertia props
-const reservations = usePage().props.reservations ?? [];
+const { props } = usePage();
+const reservations = props.reservations ?? [];
+const toast = useToast();
 
 // Approve and reject reservation functions
 const approveReservation = (id) => {
-    Inertia.post(`/reservations/${id}/approve`);
+    Inertia.post(`/reservations/${id}/approve`, {}, {
+        onSuccess: () => {
+            toast.success('Reservation approved successfully.');
+        },
+        onError: () => {
+            toast.error('Failed to approve reservation.');
+        }
+    });
 }
 
 const rejectReservation = (id) => {
-    Inertia.post(`/reservations/${id}/reject`);
+    Inertia.post(`/reservations/${id}/reject`, {}, {
+        onSuccess: () => {
+            toast.success('Reservation rejected successfully.');
+        },
+        onError: () => {
+            toast.error('Failed to reject reservation.');
+        }
+    });
 }
-</script>
 
+// Delete reservation function
+const deleteReservation = (id) => {
+    if (confirm('Are you sure you want to delete this reservation?')) {
+        Inertia.delete(`/reservations/${id}`, {
+            onSuccess: () => {
+                toast.success('Reservation deleted successfully.');
+            },
+            onError: () => {
+                toast.error('Failed to delete reservation.');
+            }
+        });
+    }
+};
+
+// Safely check if the flash message exists
+onMounted(() => {
+    if (props.flash?.success) {
+        toast.success(props.flash.success);
+    }
+});
+</script>

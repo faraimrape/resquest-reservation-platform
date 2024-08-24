@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- Guests Table -->
-                <table v-else class="min-w-full bg-white shadow-md rounded">
+                <table v-else class="min-w-full bg-white shadow-md rounded text-sm">
                     <thead>
                     <tr>
                         <th class="px-6 py-3 text-left">First Name</th>

@@ -3,78 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Property;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class RoomController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $rooms = Room::with('property')->get();
-        return Inertia::render('Rooms/Index', [
-            'rooms' => $rooms->toArray(),
-            'currentRouteName' => Route::currentRouteName()
-        ]);
+        return Inertia::render('Rooms/Index', compact('rooms'));
     }
 
     public function create()
     {
-        return Inertia::render('Rooms/Create');
+        $properties = Property::all(); // Fetch all properties for the dropdown
+        return Inertia::render('Rooms/Create', compact('properties'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'property_id' => 'required|exists:properties,id',
+        $request->validate([
             'name' => 'required|string|max:255',
-            'capacity' => 'required|integer|min:1',
-            'price_per_night' => 'required|numeric|min:0',
+            'property_id' => 'required|exists:properties,id',
+            'capacity' => 'required|integer',
+            'price_per_night' => 'required|numeric',
         ]);
 
-        Room::create($data);
+        Room::create($request->all());
+
         return redirect()->route('rooms.index')->with('success', 'Room added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Room $room)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Room $room)
     {
-        return Inertia::render('Rooms/Edit', compact('room'));
+        $properties = Property::all();
+        return Inertia::render('Rooms/Edit', compact('room', 'properties'));
     }
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, Room $room)
     {
-        $data = $request->validate([
-            'property_id' => 'required|exists:properties,id',
+        $request->validate([
             'name' => 'required|string|max:255',
-            'capacity' => 'required|integer|min:1',
-            'price_per_night' => 'required|numeric|min:0',
+            'property_id' => 'required|exists:properties,id',
+            'capacity' => 'required|integer',
+            'price_per_night' => 'required|numeric',
         ]);
 
-        $room->update($data);
+        $room->update($request->all());
+
         return redirect()->route('rooms.index')->with('success', 'Room updated successfully.');
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Room $room)
     {
         $room->delete();

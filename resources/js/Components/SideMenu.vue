@@ -10,7 +10,7 @@ const currentRouteName = usePage().props.currentRouteName;
         <nav>
             <ul>
                 <li class="mb-4">
-                    <Link href="/properties" :class="{'bg-gray-700': currentRouteName === 'properties.index'}" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Properties</Link>
+                    <Link href="/properties" :class="{'bg-gray-700': currentRouteName === 'properties.index' || currentRouteName === 'properties.create'}" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Properties</Link>
                 </li>
                 <li class="mb-4">
                     <Link href="/rooms" :class="{'bg-gray-700': currentRouteName === 'rooms.index'}" class="block px-4 py-2 hover:bg-gray-700 rounded">Manage Rooms</Link>
