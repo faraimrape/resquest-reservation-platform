@@ -17,14 +17,38 @@ class ReservationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reservations = Reservation::with('room.property','guests')->get();
+        // Retrieve the search filter, if any
+        $search = $request->input('search');
+
+        // Build the query with filtering and eager loading
+        $query = Reservation::with('room.property', 'guests');
+
+        if ($search) {
+            $query->whereHas('guests', function ($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            })->orWhereHas('room', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })->orWhereHas('room.property', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('location', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Paginate the results
+        $reservations = $query->paginate(5)->appends($request->only('search'));
+
         return Inertia::render('Reservations/Index', [
-            'reservations' => $reservations->toArray(),
-            'currentRouteName' => Route::currentRouteName()
+            'reservations' => $reservations,
+            'filters' => [
+                'search' => $search,
+            ],
+            'currentRouteName' => Route::currentRouteName(),
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -35,6 +59,7 @@ class ReservationController extends Controller
 
         return Inertia::render('Reservations/Create', [
             'properties' => $properties,
+            'currentRouteName' => Route::currentRouteName()
         ]);
     }
 

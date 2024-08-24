@@ -14,15 +14,24 @@ class PropertyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): Response
     {
-        $properties = Property::get();
+        $query = Property::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('location', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
+        $properties = $query->paginate(5); // Adjust the pagination count as needed
+
         return Inertia::render('Properties/Index', [
-            'properties' => $properties->toArray(),
-            'currentRouteName' => Route::currentRouteName()
+            'properties' => $properties,
+            'currentRouteName' => Route::currentRouteName(),
+            'filters' => $request->only(['search']),
         ]);
     }
-
 
     /**
      * Show the form for creating a new resource.

@@ -12,12 +12,35 @@ class GuestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $guests = Guest::with('reservation.room.property')->get();
+        // Retrieve the search filter, if any
+        $search = $request->input('search');
+        // Build the query with filtering and eager loading
+        $query = Guest::with('reservation.room.property');
+
+        if ($search) {
+            $query->where('first_name', 'like', '%' . $search . '%')
+                ->orWhere('last_name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('phone', 'like', '%' . $search . '%')
+                ->orWhereHas('reservation.room', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%');
+                })->orWhereHas('reservation.room.property', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('location', 'like', '%' . $search . '%');
+                });
+        }
+
+        // Paginate the results
+        $guests = $query->paginate(5)->appends($request->only('search'));
+
         return Inertia::render('Guests/Index', [
-            'guests' => $guests->toArray(),
-            'currentRouteName' => Route::currentRouteName()
+            'guests' => $guests,
+            'filters' => [
+                'search' => $search,
+            ],
+            'currentRouteName' => Route::currentRouteName(),
         ]);
     }
 

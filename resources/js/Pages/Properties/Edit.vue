@@ -7,7 +7,7 @@
 
         <div class="flex">
             <SidebarMenu />
-            <main class="flex-1 p-6 bg-gray-100">
+            <main class="flex-1 p-6 bg-gray-100 text-sm">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white shadow-md rounded-lg p-6">
                         <form @submit.prevent="submit">

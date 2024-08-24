@@ -8,7 +8,7 @@
             <SidebarMenu />
             <main class="flex-1 p-6 bg-gray-100">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white shadow-md rounded-lg p-6">
+                    <div class="bg-white shadow-md rounded-lg p-6 text-sm">
                         <form @submit.prevent="submit">
                             <div class="mb-4">
                                 <label for="first_name" class="block font-bold text-gray-700">First Name</label>
