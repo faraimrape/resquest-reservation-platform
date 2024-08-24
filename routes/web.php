@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::get('properties/{property}/rooms', [RoomController::class, 'index'])->name('properties.rooms.index'); // Rooms filtered by property
     Route::resource('rooms', RoomController::class);
     Route::resource('reservations', ReservationController::class);
+    Route::post('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
+    Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
     Route::resource('guests', GuestController::class);
 });
 

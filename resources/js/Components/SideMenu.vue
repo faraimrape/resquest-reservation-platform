@@ -1,10 +1,3 @@
-<script setup>
-import { Link, usePage } from '@inertiajs/vue3';
-
-// Access the current route name from Inertia props
-const currentRouteName = usePage().props.currentRouteName;
-</script>
-
 <template>
     <aside class="w-64 bg-gray-800 text-white h-screen px-4 py-6">
         <nav>
@@ -25,3 +18,7 @@ const currentRouteName = usePage().props.currentRouteName;
         </nav>
     </aside>
 </template>
+<script setup>
+import { Link, usePage } from '@inertiajs/vue3';
+const currentRouteName = usePage().props.currentRouteName;
+</script>

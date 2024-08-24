@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guest;
+use App\Models\Property;
 use App\Models\Reservation;
+use App\Models\Room;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ReservationController extends Controller
 {
@@ -24,10 +29,15 @@ class ReservationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
-        return Inertia::render('Reservations/Create');
+        $properties = Property::with('rooms')->get();
+
+        return Inertia::render('Reservations/Create', [
+            'properties' => $properties,
+        ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -74,52 +84,60 @@ class ReservationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Reservation $reservation)
-    {
-        return Inertia::render('Reservations/Edit', compact('reservation'));
-    }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Reservation $reservation)
+
+    public function edit(Reservation $reservation): Response
     {
-        $data = $request->validate([
+        $properties = Property::with('rooms')->get();
+        $rooms = Room::all();
+
+        return Inertia::render('Reservations/Edit', [
+            'reservation' => $reservation->load('room.property', 'guests'),
+            'properties' => $properties,
+            'rooms' => $rooms,
+        ]);
+    }
+
+
+    public function update(Request $request, Reservation $reservation): RedirectResponse
+    {
+        $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
+            'check_out' => 'required|date',
+            'is_approved' => 'required|boolean',
         ]);
 
-        $reservation->update($data);
-
+        $reservation->update($validated);
         return redirect()->route('reservations.index')->with('success', 'Reservation updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Reservation $reservation)
+    public function destroy(Reservation $reservation): RedirectResponse
     {
         $reservation->delete();
         return redirect()->route('reservations.index')->with('success', 'Reservation deleted successfully.');
     }
 
-    public function approve(Reservation $reservation)
+    public function approve(Reservation $reservation): RedirectResponse
     {
         $reservation->update(['is_approved' => true]);
-
         // Trigger email notification if needed
-
         return redirect()->route('reservations.index')->with('success', 'Reservation approved.');
     }
 
 
-    public function reject(Reservation $reservation)
+    public function reject(Reservation $reservation): RedirectResponse
     {
         $reservation->update(['is_approved' => false]);
-
         // Trigger email notification if needed
-
         return redirect()->route('reservations.index')->with('success', 'Reservation rejected.');
     }
+
 
 }

@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservation extends Model
 {
+    protected $fillable = [
+        'room_id',
+        'check_in',
+        'check_out',
+        'is_approved',
+    ];
+
     use HasFactory;
     public function guests(): HasMany
     {

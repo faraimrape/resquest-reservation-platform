@@ -1,5 +1,5 @@
 <template>
-    <Head title="Edit Room" />
+    <Head title="Update Room" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Room</h2>
@@ -9,7 +9,7 @@
             <SidebarMenu />
             <main class="flex-1 p-6 bg-gray-100">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white shadow-md rounded-lg p-6">
+                    <div class="bg-white shadow-md rounded-lg p-6 text-sm">
                         <form @submit.prevent="submit">
                             <div class="mb-4">
                                 <label for="name" class="block font-bold text-gray-700">Room Name</label>
