@@ -4,18 +4,18 @@
         <div class="flex justify-between items-center mb-6 mt-4">
             <h2 class="font-semibold text-xl text-gray-800">Search and book your property</h2>
             <div class="flex space-x-4">
-                <button
-                    @click="Inertia.get('/login')"
+                <Link
+                    href="/login"
                     class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                     Administration
-                </button>
-                <button
-                    @click="Inertia.get('/')"
+                </Link>
+                <Link
+                    href="/"
                     class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
                 >
                     Home
-                </button>
+                </Link>
             </div>
         </div>
 
@@ -57,24 +57,26 @@
                                 :key="room.id"
                                 class="bg-gray-100 rounded-lg p-4 mb-4"
                             >
-                                <div class="flex items-center">
-                                    <img
-                                        :src="room.image_url ? `/storage/${room.image_url}` : '/images/default-room.png'"
-                                        alt="Room Image"
-                                        class="w-20 h-20 rounded-lg object-cover mr-4"
-                                    />
-                                    <div>
-                                        <h4 class="text-lg font-semibold">{{ room.name }}</h4>
-                                        <p>Capacity: {{ room.capacity }}</p>
-                                        <p>Price/Night: ${{ room.price_per_night }}</p>
+                                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                                    <div class="flex items-center">
+                                        <img
+                                            :src="room.image_url ? `/storage/${room.image_url}` : '/images/default-room.png'"
+                                            alt="Room Image"
+                                            class="w-20 h-20 rounded-lg object-cover mr-4"
+                                        />
+                                        <div>
+                                            <h4 class="text-lg font-semibold">{{ room.name }}</h4>
+                                            <p>Capacity: {{ room.capacity }}</p>
+                                            <p>Price/Night: ${{ room.price_per_night }}</p>
+                                        </div>
                                     </div>
+                                    <Link
+                                        :href="`/reservations/book?property_id=${property.id}&room_id=${room.id}`"
+                                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 md:mt-0"
+                                    >
+                                        Reserve Room
+                                    </Link>
                                 </div>
-                                <button
-                                    @click="makeReservation(property.id, room.id)"
-                                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                >
-                                    Reserve Room
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -91,7 +93,7 @@
 import { ref, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
-import {Head, usePage} from '@inertiajs/vue3';
+import { Head, usePage, Link } from '@inertiajs/vue3';
 
 const { props } = usePage();
 
@@ -113,16 +115,13 @@ const searchProperties = () => {
     Inertia.get('/', { search: searchQuery.value }, { preserveState: true });
 };
 
-
 const debouncedSearch = debounce(() => {
     searchProperties();
 }, 300);
 
-
 const makeReservation = (propertyId, roomId) => {
     Inertia.get('/reservations/book', { property_id: propertyId, room_id: roomId });
 };
-
 </script>
 
 <style scoped>
