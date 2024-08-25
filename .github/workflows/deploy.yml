@@ -25,31 +25,38 @@ jobs:
           script: |
             sudo su - faraimrape <<'EOF'
             echo "Starting deployment"
-            # Sync files using rsync
+
+            # Ensure the deployment directory exists
+            mkdir -p /home/faraimrape/htdocs/resrequest.faraimrape.site/
+
+            # Sync the Laravel project from GitHub to the EC2 instance
             rsync -avzvv --delete --exclude '.env' --exclude 'storage' --exclude 'vendor' ./ /home/faraimrape/htdocs/resrequest.faraimrape.site/
 
-            # Debugging: List files after rsync
-            ls -la /home/faraimrape/htdocs/resrequest.faraimrape.site/
-
-            # Navigate to your Laravel project
+            # Change directory to the Laravel project
             cd /home/faraimrape/htdocs/resrequest.faraimrape.site/
 
-            # Install dependencies
+            # Install Composer dependencies
             composer install --optimize-autoloader --no-dev
 
-            # Run migrations
+            # Generate the .env file if it does not exist
+            if [ ! -f .env ]; then
+              cp .env.example .env
+              php artisan key:generate
+            fi
+
+            # Run database migrations
             php artisan migrate --force
 
-            # Clear and cache config/routes/views
+            # Cache configurations and routes
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
 
-            # Set correct permissions
-            sudo chown -R faraimrape:faraimrape storage bootstrap/cache
-            sudo chmod -R 775 storage bootstrap/cache
+            # Set correct permissions for storage and cache directories
+            chown -R faraimrape:faraimrape storage bootstrap/cache
+            chmod -R 775 storage bootstrap/cache
 
-            # Restart PHP-FPM (if using)
+            # Restart PHP-FPM if using it
             sudo systemctl restart php8.3-fpm
 
             echo "Laravel deployment complete."
