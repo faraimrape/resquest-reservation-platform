@@ -1,4 +1,4 @@
-name: Deploy Laravel to EC2
+name: Deploy to AWS EC2
 
 on:
   pull_request:
@@ -31,7 +31,7 @@ jobs:
       - name: 📂 Sync Files to EC2
         uses: burnett01/rsync-deployments@5.1
         with:
-          switches: -avzr --delete
+          switches: -avzr --delete --exclude '.env' --exclude 'storage/*' --exclude 'node_modules' --exclude 'vendor'
           path: ./
           remote_path: /var/www/html/resrequest/
           remote_host: ${{ secrets.EC2_INSTANCE_IP }}
@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # Set correct permissions on storage and bootstrap/cache
-            sudo chown -R ubuntu:ubuntu storage bootstrap/cache
+            sudo chown -R www-data:www-data storage bootstrap/cache
             sudo chmod -R 775 storage bootstrap/cache
 
             # Install dependencies
