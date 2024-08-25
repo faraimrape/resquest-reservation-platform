@@ -1,9 +1,3 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import SidebarMenu from '@/Components/SideMenu.vue';
-</script>
-
 <template>
     <Head title="Dashboard" />
 
@@ -27,4 +21,8 @@ import SidebarMenu from '@/Components/SideMenu.vue';
         </div>
     </AuthenticatedLayout>
 </template>
-
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link } from '@inertiajs/vue3';
+import SidebarMenu from '@/Components/SideMenu.vue';
+</script>

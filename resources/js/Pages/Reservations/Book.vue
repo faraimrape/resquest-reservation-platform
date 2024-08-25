@@ -166,7 +166,6 @@ import { Inertia } from '@inertiajs/inertia';
 const placeholderPropertyImage = '/images/default-property.jpg';
 const placeholderRoomImage = '/images/default-room.png';
 
-// Form setup
 const form = useForm({
     property_id: '',
     room_id: '',
@@ -222,7 +221,6 @@ const getSelectedRoom = () => {
     return filteredRooms.value.find(room => room.id === parseInt(form.room_id));
 };
 
-// Helper to get image URL with fallback to placeholder
 const getImageUrl = (imageUrl, type) => {
     if (imageUrl) {
         return `/storage/${imageUrl}`;
@@ -230,19 +228,16 @@ const getImageUrl = (imageUrl, type) => {
     return type === 'property' ? placeholderPropertyImage : placeholderRoomImage;
 };
 
-// Add another guest
 const addGuest = () => {
     form.guest_details.push({first_name: '', last_name: '', email: '', phone: ''});
 };
 
-// Remove a guest
 const removeGuest = (index) => {
     if (form.guest_details.length > 1) {
         form.guest_details.splice(index, 1);
     }
 };
 
-// Submit the form
 const submit = () => {
     form.post('/reservations/book', {
         onSuccess: () => {
@@ -251,7 +246,3 @@ const submit = () => {
     });
 };
 </script>
-
-<style scoped>
-/* Custom styling for responsiveness and layout */
-</style>

@@ -118,6 +118,5 @@ const changePage = (url) => {
     });
 };
 
-// Automatically trigger search when the input changes
 watch(filters, debouncedSearch, { deep: true });
 </script>

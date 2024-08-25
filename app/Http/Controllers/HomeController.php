@@ -9,6 +9,10 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function index(Request $request): Response
     {
         $search = $request->input('search');
@@ -30,7 +34,6 @@ class HomeController extends Controller
         }
 
         $properties = $properties->paginate(5);
-
         return Inertia::render('Home', [
             'properties' => $properties,
             'filters' => ['search' => $search],

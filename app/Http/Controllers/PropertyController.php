@@ -25,7 +25,7 @@ class PropertyController extends Controller
                 ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
-        $properties = $query->paginate(5); // Adjust the pagination count as needed
+        $properties = $query->paginate(5);
 
         return Inertia::render('Properties/Index', [
             'properties' => $properties,
@@ -38,7 +38,7 @@ class PropertyController extends Controller
      * Show the form for creating a new resource.
      */
 
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Properties/Create',[
            'currentRouteName' => Route::currentRouteName(),
@@ -48,7 +48,7 @@ class PropertyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -67,20 +67,22 @@ class PropertyController extends Controller
         return redirect()->route('properties.index')->with('success', 'Property created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Property $property)
-    {
-        //
-    }
 
+    /**
+     * @param Property $property
+     * @return Response
+     */
     public function edit(Property $property): Response
     {
         return Inertia::render('Properties/Edit', compact('property'));
     }
 
-    public function update(Request $request, Property $property)
+    /**
+     * @param Request $request
+     * @param Property $property
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Property $property): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -94,12 +96,9 @@ class PropertyController extends Controller
         $imageUrl = $property->image_url;
 
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
             if ($imageUrl) {
                 Storage::disk('public')->delete($imageUrl);
             }
-
-            // Store the new image in the 'properties' folder
             $imageUrl = $request->file('image')->store('properties', 'public');
             $validated['image_url'] = $imageUrl;
         }
@@ -110,15 +109,14 @@ class PropertyController extends Controller
     }
 
 
-
-
-    public function destroy(Property $property)
+    /**
+     * @param Property $property
+     * @return void
+     */
+    public function destroy(Property $property): void
     {
         $property->delete();
 
     }
-
-
-
 
 }
