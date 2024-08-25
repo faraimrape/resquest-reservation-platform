@@ -15,7 +15,7 @@ import SidebarMenu from '@/Components/SideMenu.vue';
         <div class="flex">
             <!-- Sidebar Menu -->
             <SidebarMenu />
-            
+
             <!-- Main Content Area -->
             <main class="flex-1 p-6 bg-gray-100">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

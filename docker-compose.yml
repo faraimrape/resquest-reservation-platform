@@ -3,6 +3,7 @@ version: '3.8'
 services:
     app:
         build: .
+        container_name: hotel_reservation_app
         ports:
             - "8000:9000"
         environment:
@@ -14,9 +15,14 @@ services:
             DB_PASSWORD: secret
         depends_on:
             - db
+        volumes:
+            - .:/var/www/html  # Sync the app code for development
+        networks:
+            - hotel_network
 
     db:
-        image: mysql:5.7
+        image: mariadb:latest
+        container_name: hotel_reservation_db
         environment:
             MYSQL_ROOT_PASSWORD: secret
             MYSQL_DATABASE: hotel_reservation
@@ -24,6 +30,11 @@ services:
             - "3306:3306"
         volumes:
             - dbdata:/var/lib/mysql
+        networks:
+            - hotel_network
+
+networks:
+    hotel_network:
 
 volumes:
     dbdata:
