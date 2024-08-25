@@ -17,18 +17,8 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: 📂 Sync Files to EC2
-        uses: burnett01/rsync-deployments@5.1
-        with:
-          switches: -avzr --delete
-          path: ./*
-          remote_path: /var/www/html/resrequest/
-          remote_host: ${{ secrets.EC2_INSTANCE_IP }}
-          remote_user: ubuntu
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: 🚀 Run Deployment Commands on EC2
-        uses: appleboy/ssh-action@master
+      - name: 📂 Ensure remote directory exists and set permissions
+        uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ubuntu
@@ -38,6 +28,27 @@ jobs:
             sudo chown -R ubuntu:ubuntu /var/www/html/resrequest/
             sudo chmod -R 775 /var/www/html/resrequest/
 
+      - name: 📂 Sync Files to EC2
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./
+          remote_path: /var/www/html/resrequest/
+          remote_host: ${{ secrets.EC2_INSTANCE_IP }}
+          remote_user: ubuntu
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Run Deployment Commands on EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Set correct permissions on storage and bootstrap/cache
+            sudo chown -R ubuntu:ubuntu storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+
             # Install dependencies
             composer install --optimize-autoloader --no-dev
 
@@ -46,10 +57,6 @@ jobs:
             php artisan route:cache
             php artisan view:cache
 
-            # Set correct permissions
-            sudo chown -R faraimrape:faraimrape storage bootstrap/cache
-            sudo chmod -R 775 storage bootstrap/cache
-
             # Restart PHP-FPM (if using)
             sudo systemctl restart php8.3-fpm
 
@@ -57,4 +64,3 @@ jobs:
             php artisan optimize:clear
 
             echo "Laravel deployment complete."
-            EOF
