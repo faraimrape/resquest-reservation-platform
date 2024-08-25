@@ -1,11 +1,29 @@
 <template>
     <Head title="Home" />
     <div class="max-w-7xl mx-auto p-6 bg-gray-100">
-        <h2 class="font-semibold text-xl text-gray-800 mb-6 mt-4">Search and book your property</h2>
+        <!-- Title and Buttons Container -->
+        <div class="flex justify-between items-center mb-6 mt-4">
+            <h2 class="font-semibold text-xl text-gray-800">Search and book your property</h2>
+            <div class="flex space-x-4">
+                <button
+                    @click="Inertia.get('/login')"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    Administration
+                </button>
+                <button
+                    @click="Inertia.get('/')"
+                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                    Home
+                </button>
+            </div>
+        </div>
+
         <div class="mb-6 flex flex-col md:flex-row justify-between items-center">
             <input
                 v-model="searchQuery"
-                @input="searchProperties"
+                @input="debouncedSearch"
                 type="text"
                 placeholder="Search properties..."
                 class="border-gray-300 rounded px-4 py-2 w-full md:w-1/2 mb-4 md:mb-0"
@@ -74,6 +92,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+import { debounce } from 'lodash';
 import {Head, usePage} from '@inertiajs/vue3';
 
 const { props } = usePage();
@@ -97,6 +116,11 @@ const filteredProperties = computed(() =>
 const searchProperties = () => {
     Inertia.get('/', { search: searchQuery.value }, { preserveState: true });
 };
+
+// Debounced function to delay the search until user stops typing
+const debouncedSearch = debounce(() => {
+    searchProperties();
+}, 300); // Adjust the delay as needed (300ms is a common choice)
 
 // Function to handle room reservation
 const makeReservation = (propertyId, roomId) => {

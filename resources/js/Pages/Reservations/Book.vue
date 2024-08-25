@@ -2,7 +2,23 @@
     <Head title="Create Reservation" />
     <div class="max-w-7xl mx-auto p-6 bg-gray-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="font-semibold text-xl text-gray-800 mb-4">Fill in your reservation details</h2>
+            <div class="flex justify-between items-center mb-6 mt-4">
+                <h2 class="font-semibold text-xl text-gray-800">Complete your reservation</h2>
+                <div class="flex space-x-4">
+                    <button
+                        @click="Inertia.get('/login')"
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                        Administration
+                    </button>
+                    <button
+                        @click="Inertia.get('/')"
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                    >
+                        Home
+                    </button>
+                </div>
+            </div>
             <div class="bg-white shadow-md rounded-lg p-6 text-sm">
 
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Create Reservation</h2>
