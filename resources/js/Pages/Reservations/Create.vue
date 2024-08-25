@@ -134,6 +134,8 @@ import { useForm,usePage, Link, Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SidebarMenu from '@/Components/SideMenu.vue';
+import {useToast} from "vue-toastification";
+const toast = useToast();
 
 // Form data with dynamic guest details
 const form = useForm({
@@ -181,9 +183,10 @@ const removeGuest = (index) => {
 };
 
 const submit = () => {
-    form.post('/reservations', {
+    form.post('/reservations/backend', {
         onSuccess: () => {
             form.reset();
+            toast.success('Reservations created successfully.');
         },
     });
 };

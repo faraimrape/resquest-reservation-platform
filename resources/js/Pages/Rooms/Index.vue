@@ -59,7 +59,7 @@
                                     v-if="rooms.prev_page_url"
                                     :href="rooms.prev_page_url"
                                     @click.prevent="changePage(rooms.prev_page_url)"
-                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 m-1"
                                 >
                                     Previous Page
                                 </Link>
@@ -67,7 +67,7 @@
                                     v-if="rooms.next_page_url"
                                     :href="rooms.next_page_url"
                                     @click.prevent="changePage(rooms.next_page_url)"
-                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 m-1"
                                 >
                                     Next Page
                                 </Link>

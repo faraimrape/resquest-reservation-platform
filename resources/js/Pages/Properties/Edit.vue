@@ -108,6 +108,7 @@ const submit = () => {
         },
         onSuccess: () => {
             form.reset();
+            toast.success('Property updated successfully.');
         },
         preserveState: true,
         preserveScroll: true,
