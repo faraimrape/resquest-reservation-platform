@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('reservations', ReservationController::class)->except(['store']);
     Route::post('reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
     Route::post('reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
+    Route::post('reservations/backend', [ReservationController::class, 'store'])->name('reservations.store');
 
     // Guest management routes
     Route::resource('guests', GuestController::class);

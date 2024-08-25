@@ -63,7 +63,7 @@
                                 v-if="guests.prev_page_url"
                                 :href="guests.prev_page_url"
                                 @click.prevent="changePage(guests.prev_page_url)"
-                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 m-1"
                             >
                                 Previous Page
                             </Link>
@@ -71,7 +71,7 @@
                                 v-if="guests.next_page_url"
                                 :href="guests.next_page_url"
                                 @click.prevent="changePage(guests.next_page_url)"
-                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 m-1"
                             >
                                 Next Page
                             </Link>

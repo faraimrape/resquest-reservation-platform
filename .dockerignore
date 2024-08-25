@@ -1,0 +1,3 @@
+echo "node_modules" >> .dockerignore
+echo "vendor" >> .dockerignore
+echo ".git" >> .dockerignore

@@ -66,7 +66,8 @@
 import { useForm, Link, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SidebarMenu from '@/Components/SideMenu.vue';
-
+import {useToast} from "vue-toastification";
+const toast = useToast();
 const form = useForm({
     name: '',
     location: '',
@@ -81,7 +82,10 @@ const handleFileChange = (event) => {
 
 const submit = () => {
     form.post('/properties', {
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            toast.success('Property created successfully.');
+        },
     });
 };
 </script>
