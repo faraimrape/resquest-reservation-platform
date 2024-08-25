@@ -35,6 +35,12 @@ jobs:
             # Change directory to the Laravel project
             cd /home/faraimrape/htdocs/resrequest.faraimrape.site/
 
+            # Create storage and cache directories if they don't exist
+            mkdir -p storage bootstrap/cache
+
+            # Set correct ownership
+            chown -R faraimrape:faraimrape /home/faraimrape/htdocs/resrequest.faraimrape.site/
+
             # Install Composer dependencies
             composer install --optimize-autoloader --no-dev
 
