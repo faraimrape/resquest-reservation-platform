@@ -10,14 +10,13 @@ on:
 jobs:
   deploy:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
-    name: 🎉 Laravel Deployment Pipeline
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: 🚀 Deploy to EC2 as the correct user
+      - name: 📂 Deploy to EC2 as faraimrape
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_IP }}
@@ -25,8 +24,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo su - faraimrape <<'EOF'
+            echo "Starting deployment"
             # Sync files using rsync
-            rsync -avz --delete --exclude '.env' --exclude 'storage' --exclude 'vendor' ./ /home/faraimrape/htdocs/resrequest.faraimrape.site/
+            rsync -avzvv --delete --exclude '.env' --exclude 'storage' --exclude 'vendor' ./ /home/faraimrape/htdocs/resrequest.faraimrape.site/
+
+            # Debugging: List files after rsync
+            ls -la /home/faraimrape/htdocs/resrequest.faraimrape.site/
 
             # Navigate to your Laravel project
             cd /home/faraimrape/htdocs/resrequest.faraimrape.site/
