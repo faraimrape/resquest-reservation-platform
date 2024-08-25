@@ -154,11 +154,9 @@ const filteredRooms = computed(() => {
     return selectedProperty ? selectedProperty.rooms : [];
 });
 
-// Properties and rooms data
 const properties = usePage().props.properties ?? [];
 const rooms = ref([]);
 
-// Fetch rooms when a property is selected
 const fetchRooms = async () => {
     if (form.property_id) {
         try {
@@ -172,19 +170,16 @@ const fetchRooms = async () => {
     }
 };
 
-// Add another guest
 const addGuest = () => {
     form.guest_details.push({ first_name: '', last_name: '', email: '', phone: '' });
 };
 
-// Remove a guest
 const removeGuest = (index) => {
     if (form.guest_details.length > 1) {
         form.guest_details.splice(index, 1);
     }
 };
 
-// Submit the form
 const submit = () => {
     form.post('/reservations', {
         onSuccess: () => {
@@ -194,6 +189,3 @@ const submit = () => {
 };
 </script>
 
-<style scoped>
-/* Custom styling for form inputs */
-</style>

@@ -10,7 +10,7 @@ on:
 jobs:
   deploy:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
-    name: 🎉 Laravel Deployment Pipeline
+    name: 🎉 AWS Deployment Pipeline
     runs-on: ubuntu-latest
 
     steps:
@@ -65,4 +65,10 @@ jobs:
             # Optionally clear any previous cache
             php artisan optimize:clear
 
-            echo "Laravel deployment complete."
+            # Ensure deploy.sh is executable
+            sudo chmod +x /var/www/html/resrequest/deploy.sh
+
+            # Run deploy.sh
+            cd /var/www/html/resrequest/
+            ./deploy.sh
+            echo "Deployment complete."

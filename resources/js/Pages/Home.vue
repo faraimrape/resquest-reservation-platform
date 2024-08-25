@@ -1,7 +1,6 @@
 <template>
     <Head title="Home" />
     <div class="max-w-7xl mx-auto p-6 bg-gray-100">
-        <!-- Title and Buttons Container -->
         <div class="flex justify-between items-center mb-6 mt-4">
             <h2 class="font-semibold text-xl text-gray-800">Search and book your property</h2>
             <div class="flex space-x-4">
@@ -37,7 +36,6 @@
                 :key="property.id"
                 class="bg-white shadow-md rounded-lg mb-6 p-4"
             >
-                <!-- Property Information -->
                 <div class="flex flex-col md:flex-row">
                     <div class="w-full md:w-1/3">
                         <img
@@ -97,7 +95,6 @@ import {Head, usePage} from '@inertiajs/vue3';
 
 const { props } = usePage();
 
-// Extract the data array from the paginated properties object
 const properties = ref(props.properties?.data ?? []);
 const searchQuery = ref('');
 
@@ -112,17 +109,16 @@ const filteredProperties = computed(() =>
     )
 );
 
-// Function to search properties
 const searchProperties = () => {
     Inertia.get('/', { search: searchQuery.value }, { preserveState: true });
 };
 
-// Debounced function to delay the search until user stops typing
+
 const debouncedSearch = debounce(() => {
     searchProperties();
-}, 300); // Adjust the delay as needed (300ms is a common choice)
+}, 300);
 
-// Function to handle room reservation
+
 const makeReservation = (propertyId, roomId) => {
     Inertia.get('/reservations/book', { property_id: propertyId, room_id: roomId });
 };
@@ -130,7 +126,6 @@ const makeReservation = (propertyId, roomId) => {
 </script>
 
 <style scoped>
-/* Mobile responsiveness */
 @media (max-width: 768px) {
     .property-image {
         width: 100%;

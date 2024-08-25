@@ -11,7 +11,7 @@ class ReservationSeeder extends Seeder
     public function run()
     {
         // Sample reservation seeder
-        $room = Room::first(); // Assumes there’s at least one room available
+        $room = Room::first();
 
         Reservation::create([
             'room_id' => $room->id,

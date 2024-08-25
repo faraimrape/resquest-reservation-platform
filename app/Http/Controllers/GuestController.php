@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class GuestController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         // Retrieve the search filter, if any
         $search = $request->input('search');
-        // Build the query with filtering and eager loading
         $query = Guest::with('reservation.room.property');
 
         if ($search) {
@@ -44,34 +45,11 @@ class GuestController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Guest $guest)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Guest $guest)
+    public function edit(Guest $guest): Response
     {
         return Inertia::render('Guests/Edit', compact('guest'));
     }
@@ -80,7 +58,7 @@ class GuestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Guest $guest)
+    public function update(Request $request, Guest $guest): RedirectResponse
     {
         $data = $request->validate([
             'first_name' => 'required|string|max:255',
@@ -98,7 +76,7 @@ class GuestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Guest $guest)
+    public function destroy(Guest $guest): RedirectResponse
     {
         $guest->delete();
         return redirect()->route('guests.index')->with('success', 'Guest deleted successfully.');

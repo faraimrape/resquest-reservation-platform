@@ -116,7 +116,7 @@ const debouncedSearch = debounce(() => {
             reservations.value = page.props.reservations;
         }
     });
-}, 1000);
+}, 900);
 
 const changePage = (url) => {
     Inertia.get(url, {}, {
@@ -151,7 +151,6 @@ const rejectReservation = (id) => {
     });
 };
 
-// Delete reservation function
 const deleteReservation = (id) => {
     Inertia.delete(`/reservations/${id}`, {
         onSuccess: () => {
@@ -163,6 +162,5 @@ const deleteReservation = (id) => {
     });
 };
 
-// Automatically trigger search when the input changes
 watch(filters, debouncedSearch, {deep: true});
 </script>

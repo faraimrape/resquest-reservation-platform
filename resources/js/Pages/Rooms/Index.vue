@@ -4,7 +4,6 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Manage Rooms</h2>
         </template>
-
         <div class="flex">
             <SidebarMenu />
             <main class="flex-1 p-6 bg-gray-100">
@@ -114,7 +113,6 @@ const deleteRoom = (id) => {
     }
 };
 
-// Debounce the search functionality to prevent excessive requests
 const debouncedSearch = debounce(() => {
     Inertia.get('/rooms', filters.value, {
         preserveState: true,
@@ -123,9 +121,8 @@ const debouncedSearch = debounce(() => {
             rooms.value = page.props.rooms;
         }
     });
-}, 900); // Adjust the debounce time as needed
+}, 900);
 
-// Handle page changes for pagination
 const changePage = (url) => {
     Inertia.get(url, {}, {
         preserveState: true,
@@ -136,6 +133,5 @@ const changePage = (url) => {
     });
 };
 
-// Automatically trigger search when the input changes
 watch(filters, debouncedSearch, { deep: true });
 </script>

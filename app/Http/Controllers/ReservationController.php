@@ -17,12 +17,10 @@ class ReservationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         // Retrieve the search filter, if any
         $search = $request->input('search');
-
-        // Build the query with filtering and eager loading
         $query = Reservation::with('room.property', 'guests');
 
         if ($search) {
@@ -49,11 +47,15 @@ class ReservationController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function createFrontendReservation(Request $request): Response
     {
         // Fetch properties that are published along with their rooms
         $properties = Property::where('is_published', true)
-            ->with('rooms') // Load rooms without any filtering on the rooms table
+            ->with('rooms')
             ->get();
 
         return Inertia::render('Reservations/Book', [
@@ -62,8 +64,10 @@ class ReservationController extends Controller
     }
 
 
-
-
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function storeFrontendReservation(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -82,7 +86,7 @@ class ReservationController extends Controller
             'room_id' => $validated['room_id'],
             'check_in' => $validated['check_in'],
             'check_out' => $validated['check_out'],
-            'is_approved' => false, // Initially mark as pending approval
+            'is_approved' => false,
         ]);
 
         // Add guests to the reservation
@@ -141,19 +145,9 @@ class ReservationController extends Controller
                 'phone' => $guestData['phone'],
             ]);
         }
-
-        // Trigger email notification if needed
-
         return redirect()->route('reservations.index')->with('success', 'Reservation created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -175,6 +169,11 @@ class ReservationController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @param Reservation $reservation
+     * @return RedirectResponse
+     */
     public function update(Request $request, Reservation $reservation): RedirectResponse
     {
         $validated = $request->validate([
@@ -198,6 +197,10 @@ class ReservationController extends Controller
         return redirect()->route('reservations.index')->with('success', 'Reservation deleted successfully.');
     }
 
+    /**
+     * @param Reservation $reservation
+     * @return RedirectResponse
+     */
     public function approve(Reservation $reservation): RedirectResponse
     {
         $reservation->update(['is_approved' => true]);
@@ -206,12 +209,14 @@ class ReservationController extends Controller
     }
 
 
+    /**
+     * @param Reservation $reservation
+     * @return RedirectResponse
+     */
     public function reject(Reservation $reservation): RedirectResponse
     {
         $reservation->update(['is_approved' => false]);
-        // Trigger email notification if needed
         return redirect()->route('reservations.index')->with('success', 'Reservation rejected.');
     }
-
 
 }

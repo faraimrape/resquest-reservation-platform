@@ -91,8 +91,6 @@ const toast = useToast();
 
 // Handle guest name
 const guestName = computed(() => reservation.guests?.length > 0 ? `${reservation.guests[0].first_name} ${reservation.guests[0].last_name}` : 'No Guests');
-
-// Form setup
 const form = useForm({
     room_id: reservation.room_id,
     check_in: reservation.check_in,
@@ -103,12 +101,10 @@ const form = useForm({
 const selectedPropertyId = ref(reservation.room.property_id);
 const filteredRooms = ref([]);
 
-// Filter rooms based on selected property
 const filterRoomsByProperty = () => {
     filteredRooms.value = rooms.filter(room => room.property_id === selectedPropertyId.value);
 };
 
-// Populate rooms for the initially selected property
 filterRoomsByProperty();
 
 // Submit form

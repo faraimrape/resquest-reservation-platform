@@ -46,7 +46,6 @@
                                 <input type="file" id="image" @change="handleImageChange" class="border border-gray-300 rounded-lg shadow-sm w-full px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <span v-if="form.errors.image" class="text-red-600">{{ form.errors.image }}</span>
 
-                                <!-- Display the existing image if available -->
                                 <div v-if="room.image_url" class="mt-4">
                                     <p class="font-bold">Current Image:</p>
                                     <img :src="`/storage/${room.image_url}`" alt="Current Room Image" class="mt-2 w-48 rounded">
@@ -85,7 +84,6 @@ const form = useForm({
 });
 
 const toast = useToast();
-
 const handleImageChange = (event) => {
     form.image = event.target.files[0];
 };
