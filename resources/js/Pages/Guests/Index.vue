@@ -9,7 +9,7 @@
             <main class="flex-1 p-6 bg-gray-100">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white shadow-md rounded-lg p-6">
-                        <h1 class="text-3xl font-bold mb-4">Guests</h1>
+                        <h2 class="text-2xl font-bold mb-4">Manage Guests</h2>
 
                         <!-- Search Box -->
                         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -27,7 +27,7 @@
 
                         <!-- Guests Table -->
                         <div class="overflow-x-auto">
-                        <table v-if="guests.data && guests.data.length > 0" class="min-w-full max-w-full w-full bg-white shadow-md rounded-lg text-sm">
+                        <table v-if="guests.data && guests.data.length > 0" class="border rounded-md min-w-full max-w-full w-full bg-white shadow-md rounded-lg text-sm">
                             <thead>
                             <tr>
                                 <th class="px-6 py-3 text-left">First Name</th>

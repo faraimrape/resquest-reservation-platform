@@ -30,7 +30,7 @@
 
                         <div v-if="properties.data && properties.data.length > 0">
                             <div class="overflow-x-auto">
-                            <table class="min-w-full bg-white shadow-md rounded-lg text-sm">
+                            <table class="min-w-full bg-white shadow-md rounded-lg text-sm border rounded-md">
                                 <thead>
                                 <tr>
                                     <th class="px-6 py-3 text-left">Property Name</th>

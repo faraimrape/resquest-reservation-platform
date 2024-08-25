@@ -10,7 +10,7 @@
             <main class="flex-1 p-6 bg-gray-100 text-sm">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white shadow-md rounded-lg p-6">
-                        <h1 class="text-3xl font-bold mb-4">Reservations</h1>
+                        <h1 class="text-2xl font-bold mb-4">Manage Reservations</h1>
 
                         <!-- Search Box and Add Button in the same row -->
                         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -28,7 +28,7 @@
                             No reservations found.
                         </div>
                         <div class="overflow-x-auto">
-                        <table v-if="reservations.data && reservations.data.length > 0" class="min-w-full bg-white shadow-md rounded-lg text-sm">
+                        <table v-if="reservations.data && reservations.data.length > 0" class="border min-w-full bg-white shadow-md rounded-lg text-sm rounded-md">
                             <thead>
                             <tr>
                                 <th class="px-2 py-3 text-left">Name</th>
