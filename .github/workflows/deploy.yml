@@ -10,60 +10,48 @@ on:
 jobs:
   deploy:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    name: 🎉 Laravel Deployment Pipeline
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: 📂 Deploy to EC2 as faraimrape
+      - name: 📂 Sync Files to EC2
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./*
+          remote_path: /var/www/html/consult-mono/resrequest/
+          remote_host: ${{ secrets.EC2_INSTANCE_IP }}
+          remote_user: ubuntu
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Run Deployment Commands on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo su - faraimrape <<'EOF'
-            echo "Starting deployment"
 
-            # Ensure the deployment directory exists
-            mkdir -p /home/faraimrape/htdocs/resrequest.faraimrape.site/
-
-            # Sync the Laravel project from GitHub to the EC2 instance
-            rsync -avzvv --delete --exclude '.env' --exclude 'storage' --exclude 'vendor' ./ /home/faraimrape/htdocs/resrequest.faraimrape.site/
-
-            # Change directory to the Laravel project
-            cd /home/faraimrape/htdocs/resrequest.faraimrape.site/
-
-            # Create storage and cache directories if they don't exist
-            mkdir -p storage bootstrap/cache
-
-            # Set correct ownership
-            chown -R faraimrape:faraimrape /home/faraimrape/htdocs/resrequest.faraimrape.site/
-
-            # Install Composer dependencies
+            # Install dependencies
             composer install --optimize-autoloader --no-dev
 
-            # Generate the .env file if it does not exist
-            if [ ! -f .env ]; then
-              cp .env.example .env
-              php artisan key:generate
-            fi
-
-            # Run database migrations
-            php artisan migrate --force
-
-            # Cache configurations and routes
+            # Clear and cache config/routes/views
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
 
-            # Set correct permissions for storage and cache directories
-            chown -R faraimrape:faraimrape storage bootstrap/cache
-            chmod -R 775 storage bootstrap/cache
+            # Set correct permissions
+            sudo chown -R faraimrape:faraimrape storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
 
-            # Restart PHP-FPM if using it
+            # Restart PHP-FPM (if using)
             sudo systemctl restart php8.3-fpm
+
+            # Optionally clear any previous cache
+            php artisan optimize:clear
 
             echo "Laravel deployment complete."
             EOF
